@@ -1,299 +1,393 @@
-# 🎓 Online Education Student Performance & Risk Prediction
+# 🧹 Customer Churn Data Preprocessing
 
 ## 📌 Project Overview
 
-This project focuses on analyzing **online education student data** and using **Machine Learning** techniques to understand and predict student **academic performance, engagement, dropout risk, and final results**.
+This project focuses on **data preprocessing for customer churn analysis** using Python and popular data science and machine learning libraries.
 
-The project explores different student-related factors such as education level, region, studied credits, online activity, average score, engagement level, performance level, and risk level.
+The project uses the **Churn Modelling dataset**, which contains customer information such as credit score, geography, age, tenure, balance, number of products, estimated salary, and churn status.
 
-The goal is to use data analysis and machine learning to identify students who may require additional academic support and to understand the factors associated with student success or withdrawal.
+The preprocessing work is divided into two main tasks:
+
+1. 🧹 **Data Cleaning**
+2. ⚖️ **Feature Scaling**
 
 ---
 
-## 🎯 Objectives
+## 🎯 Project Objectives
 
-* Analyze student demographic and academic information.
-* Study student engagement in online learning.
-* Analyze the relationship between online activity and academic performance.
-* Identify students with different levels of academic risk.
-* Predict student outcomes using Machine Learning.
-* Analyze factors related to passing, failing, and withdrawal.
-* Provide useful insights that can support early intervention for at-risk students.
+* Load and inspect a customer churn dataset.
+* Identify missing values.
+* Understand the structure and data types of the dataset.
+* Handle missing values in the `Age` column.
+* Explore basic statistical information.
+* Select relevant numerical features.
+* Understand feature scaling techniques.
+* Prepare customer data for further machine learning tasks.
 
 ---
 
 ## 📊 Dataset
 
-The dataset contains **32,593 student records** and **14 features**.
+The dataset used in this project is:
+
+```text
+Churn_Modelling1.csv
+```
+
+### Dataset Information
+
+| Property              | Details  |
+| --------------------- | -------- |
+| **Number of Records** | 10,000   |
+| **Number of Columns** | 14       |
+| **Target Variable**   | `Exited` |
+| **Duplicate Rows**    | None     |
 
 ### Dataset Features
 
-| Feature             | Description                                 |
-| ------------------- | ------------------------------------------- |
-| `id_student`        | Unique student identifier                   |
-| `gender`            | Gender of the student                       |
-| `region`            | Geographic region of the student            |
-| `highest_education` | Highest level of education                  |
-| `studied_credits`   | Number of credits studied                   |
-| `imd_band`          | Socio-economic/deprivation band             |
-| `total_clicks`      | Total online learning platform interactions |
-| `avg_score`         | Average academic score                      |
-| `engagement_level`  | Student engagement level                    |
-| `performance_level` | Student performance category                |
-| `risk_level`        | Academic/dropout risk category              |
-| `pass_flag`         | Indicates whether the student passed        |
-| `dropout_flag`      | Indicates whether the student dropped out   |
-| `final_result`      | Final student outcome                       |
-
-### Final Result Categories
-
-The `final_result` column contains four outcomes:
-
-* 🟢 **Pass**
-* 🔴 **Fail**
-* 🟠 **Withdrawn**
-* 🟣 **Distinction**
+| Column            | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| `RowNumber`       | Row number of the customer                          |
+| `CustomerId`      | Unique customer ID                                  |
+| `Surname`         | Customer surname                                    |
+| `CreditScore`     | Customer's credit score                             |
+| `Geography`       | Customer's country                                  |
+| `Gender`          | Customer gender                                     |
+| `Age`             | Customer age                                        |
+| `Tenure`          | Number of years the customer has been with the bank |
+| `Balance`         | Customer account balance                            |
+| `NumOfProducts`   | Number of bank products used                        |
+| `HasCrCard`       | Indicates whether the customer has a credit card    |
+| `IsActiveMember`  | Indicates whether the customer is an active member  |
+| `EstimatedSalary` | Estimated customer salary                           |
+| `Exited`          | Indicates whether the customer left the bank        |
 
 ---
 
-## 🔍 Exploratory Data Analysis
+# 🧹 1. Data Cleaning
 
-The project performs **Exploratory Data Analysis (EDA)** to understand patterns and relationships within the dataset.
+The `Data Cleaning.ipynb` notebook performs basic data inspection and missing-value handling.
 
-### Analysis Includes
+## 📚 Libraries Used
 
-* Dataset structure and information
-* Missing value analysis
-* Statistical analysis
-* Student outcome distribution
-* Gender distribution
-* Regional distribution
-* Education-level distribution
-* Studied credits analysis
-* Online engagement analysis
-* Average score distribution
-* Performance-level analysis
-* Risk-level analysis
-* Correlation analysis
-* Data visualization using charts and graphs
-
----
-
-## 🧹 Data Preprocessing
-
-Before applying Machine Learning algorithms, the dataset is prepared through several preprocessing steps:
-
-* Handling missing values
-* Encoding categorical variables
-* Selecting relevant features
-* Removing unnecessary identifiers
-* Preparing input and target variables
-* Splitting the dataset into training and testing sets
-* Feature transformation and scaling when required
-
----
-
-## 🤖 Machine Learning
-
-Machine Learning techniques are applied to identify patterns in student data and predict student outcomes.
-
-### 1. 📚 Student Performance Prediction
-
-Predict the academic performance of students based on available academic and engagement-related features.
-
-### 2. 🚨 Dropout Risk Prediction
-
-Identify students who may have a higher probability of dropping out.
-
-### 3. 🎓 Final Result Prediction
-
-Predict the student's final outcome:
-
-```text
-Pass | Fail | Withdrawn | Distinction
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 ```
 
-### 4. ⚠️ Student Risk Analysis
+### 📥 Load the Dataset
 
-Analyze student engagement and academic characteristics to categorize students according to their risk level.
+```python
+df = pd.read_csv("Churn_modelling.csv")
+```
+
+### 🔍 Inspect the Dataset
+
+```python
+df.info()
+```
+
+This is used to examine:
+
+* Column names
+* Data types
+* Number of non-null values
+* Dataset structure
+
+### ❓ Check Missing Values
+
+```python
+df.isnull().sum()
+```
+
+The dataset contains missing values in:
+
+| Column   | Missing Values |
+| -------- | -------------: |
+| `Gender` |             37 |
+| `Age`    |             34 |
+
+### 🗑️ Remove Columns Containing Missing Values
+
+The notebook also demonstrates:
+
+```python
+updated_df = df.dropna(axis=1)
+```
+
+This removes columns that contain missing values.
+
+> **Note:** Dropping an entire column because of missing values is not always the best approach. In real-world machine learning projects, it is usually better to investigate the missing data and apply an appropriate imputation strategy.
+
+### 📐 Calculate Age Statistics
+
+The mean and median of `Age` are calculated using:
+
+```python
+df["Age"].mean()
+df["Age"].median()
+```
+
+### 🔧 Fill Missing Age Values
+
+Missing values in `Age` are replaced using the mean age:
+
+```python
+updated_df = df.copy()
+
+updated_df["Age"] = updated_df["Age"].fillna(
+    df["Age"].mean()
+)
+```
+
+This allows the dataset to retain those customer records instead of removing them.
 
 ---
 
-## 📈 Model Evaluation
+# ⚖️ 2. Feature Scaling
 
-Machine Learning models can be evaluated using appropriate performance metrics such as:
+The `Feature_Scaling.ipynb` notebook prepares numerical features for feature scaling using Scikit-learn.
 
-* **Accuracy**
-* **Precision**
-* **Recall**
-* **F1-Score**
-* **Confusion Matrix**
-
-These metrics help determine how effectively the model predicts student outcomes.
-
----
-
-## 🛠️ Technologies Used
-
-* 🐍 **Python**
-* ☁️ **Google Colab**
-* 📓 **Jupyter Notebook**
-* 🐼 **Pandas**
-* 🔢 **NumPy**
-* 📊 **Matplotlib**
-* 📈 **Seaborn**
-* 🤖 **Scikit-learn**
-* 🧠 **Machine Learning**
-
----
-
-## 📚 Python Libraries
+## 📚 Libraries Used
 
 ```python
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+```
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix
+Scikit-learn preprocessing classes:
+
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+```
+
+### 🔍 Dataset Inspection
+
+The notebook uses:
+
+```python
+df.info()
+df.describe().round(2)
+df.head()
+```
+
+These functions are used to:
+
+* Inspect the dataset
+* Understand data types
+* View statistical information
+* Display the first few records
+
+### 🎯 Selecting Features
+
+The notebook creates a new DataFrame containing:
+
+```python
+new_df = pd.DataFrame(
+    df,
+    columns=["Age", "Tenure"]
 )
+```
+
+Therefore, the following numerical features are selected for the scaling exercise:
+
+* `Age`
+* `Tenure`
+
+### 📌 Scaling Techniques
+
+Two common scaling techniques are introduced:
+
+#### Standardization
+
+```python
+scaler = StandardScaler()
+```
+
+StandardScaler transforms features so that they generally have:
+
+* Mean ≈ `0`
+* Standard deviation ≈ `1`
+
+#### Min-Max Scaling
+
+```python
+scaler = MinMaxScaler()
+```
+
+MinMaxScaler generally transforms values into a range between:
+
+```text
+0 and 1
+```
+
+> **Note:** The current notebook imports `StandardScaler` and `MinMaxScaler` and selects `Age` and `Tenure`, but the actual scaling transformation has not yet been applied in the provided notebook.
+
+---
+
+# 🔄 Data Preprocessing Workflow
+
+```text
+             Churn Modelling Dataset
+                       │
+                       ▼
+                Load Dataset
+                       │
+                       ▼
+                 Inspect Data
+                       │
+                       ▼
+             Check Missing Values
+                       │
+                       ▼
+                Data Cleaning
+                       │
+                       ▼
+              Handle Missing Data
+                       │
+                       ▼
+              Select Age & Tenure
+                       │
+                       ▼
+               Feature Scaling
+                       │
+                       ▼
+                Preprocessed Data
 ```
 
 ---
 
-## 📁 Project Structure
+# 📊 Dataset Quality
+
+The provided dataset contains:
+
+* **10,000 customer records**
+* **14 columns**
+* **No duplicate rows**
+* **34 missing values in `Age`**
+* **37 missing values in `Gender`**
+
+The cleaning notebook specifically handles missing `Age` values using the **mean of the `Age` column**.
+
+---
+
+# 🛠️ Technologies Used
+
+| Technology              | Purpose                           |
+| ----------------------- | --------------------------------- |
+| 🐍 **Python**           | Programming language              |
+| 🐼 **Pandas**           | Data loading and manipulation     |
+| 🔢 **NumPy**            | Numerical operations              |
+| 📊 **Matplotlib**       | Data visualization                |
+| 📈 **Seaborn**          | Statistical visualization         |
+| 🤖 **Scikit-learn**     | Feature preprocessing and scaling |
+| 📓 **Jupyter Notebook** | Development environment           |
+
+---
+
+# 📁 Project Structure
 
 ```text
-Online-Education-ML/
+Customer-Churn-Preprocessing/
 │
-├── online_education_dataset.csv
-├── Online_Education_ML.ipynb
+├── Churn_Modelling1.csv
+│
+├── Data Cleaning.ipynb
+│
+├── Feature_Scaling.ipynb
+│
 └── README.md
 ```
 
 ---
 
-## 🚀 How to Run the Project
+# 🚀 How to Run the Project
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/YOUR-USERNAME/Online-Education-ML.git
-```
-
-### 2. Navigate to the Project
+## 1. Clone the Repository
 
 ```bash
-cd Online-Education-ML
+git clone https://github.com/Jenos07/cleaning-and-prediction.git
 ```
 
-### 3. Install Required Libraries
+## 2. Navigate to the Project
 
 ```bash
-pip install pandas numpy matplotlib seaborn scikit-learn
+cd cleaning-and-prediction
 ```
 
-### 4. Run the Notebook
+## 3. Install Required Libraries
 
-Open:
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn jupyter
+```
+
+## 4. Start Jupyter Notebook
+
+```bash
+jupyter notebook
+```
+
+## 5. Open the Notebooks
+
+Run:
 
 ```text
-Online_Education_ML.ipynb
+Data Cleaning.ipynb
 ```
 
-You can run the project using:
+or:
 
-* ☁️ Google Colab
-* 📓 Jupyter Notebook
-* 💻 VS Code
-
----
-
-## ☁️ Google Colab
-
-The complete analysis and Machine Learning implementation is available in Google Colab.
-
-### 🔗 Colab Notebook
-
-[Open Google Colab Notebook](https://colab.research.google.com/drive/16OjUnk5fWE28r3eQyuXoeSM2UF5Rb1Bf)
-
-> **Note:** Make sure the notebook's sharing permission is set to **Anyone with the link – Viewer** if you want other people to access it.
+```text
+Feature_Scaling.ipynb
+```
 
 ---
 
-## 📌 Key Insights
+# 🔮 Future Improvements
 
-The dataset provides useful information about student behavior and academic outcomes.
+The project can be extended by:
 
-Important areas investigated in this project include:
+1. Handling missing `Gender` values.
+2. Applying `StandardScaler` to numerical features.
+3. Applying `MinMaxScaler` and comparing the results.
+4. Encoding categorical variables such as `Geography` and `Gender`.
+5. Removing unnecessary identifiers such as `RowNumber` and `CustomerId`.
+6. Splitting the dataset into training and testing sets.
+7. Training a machine learning model to predict customer churn.
+8. Evaluating the model using:
 
-* 📊 Student engagement and online activity
-* 📝 Average academic scores
-* 🎓 Academic performance levels
-* ⚠️ Student risk levels
-* 🚨 Dropout behavior
-* 🏆 Final student outcomes
-* 📚 Relationship between educational background and performance
-
-These insights can help educational institutions identify students who may need additional academic support.
-
----
-
-## 💡 Real-World Applications
-
-This type of Machine Learning system can be used in:
-
-* 🎓 Online learning platforms
-* 🏫 Colleges and universities
-* 👨‍🎓 Student monitoring systems
-* 💻 E-learning applications
-* 👨‍🏫 Academic counseling systems
-* 🚨 Early dropout detection systems
-
-### Example
-
-If a student shows **low engagement, low academic performance, and high risk**, an educational institution could provide additional mentoring or academic support before the student withdraws.
+   * Accuracy
+   * Precision
+   * Recall
+   * F1-Score
+   * Confusion Matrix
+9. Building a complete customer churn prediction pipeline.
+10. Deploying the trained model as a web application or API.
 
 ---
 
-## 🔮 Future Improvements
+# 💡 Key Learning Outcomes
 
-Future versions of this project could include:
+Through this project, I learned how to:
 
-* ⚡ Real-time student performance prediction
-* 🚨 Early warning system for dropout detection
-* 📊 Interactive student analytics dashboard
-* 🔔 Automated alerts for high-risk students
-* 🧠 Deep Learning models
-* ⚙️ Hyperparameter optimization
-* 🚀 Model deployment using Flask or FastAPI
-* 🌐 Web application for student risk prediction
-
----
-
-## ⭐ Project Highlights
-
-| Category                 | Details                         |
-| ------------------------ | ------------------------------- |
-| **Domain**               | Online Education                |
-| **Dataset Size**         | 32,593 records                  |
-| **Features**             | 14                              |
-| **Programming Language** | Python                          |
-| **ML Type**              | Classification / Prediction     |
-| **Data Analysis**        | Pandas, NumPy                   |
-| **Visualization**        | Matplotlib, Seaborn             |
-| **ML Framework**         | Scikit-learn                    |
-| **Environment**          | Google Colab / Jupyter Notebook |
+* Work with a real-world customer dataset.
+* Load and inspect datasets using Pandas.
+* Identify missing values.
+* Handle missing numerical values.
+* Perform basic statistical analysis.
+* Select relevant numerical features.
+* Understand data preprocessing.
+* Understand Standardization and Min-Max Scaling.
+* Prepare data for machine learning.
 
 ---
 
-## 👨‍💻 Author
+# 👩‍💻 Author
 
-**Karthikeyan R.**
+**karthikeyan R**
 
-> Machine Learning Project — Online Education Student Performance & Risk Prediction
+This project was created as a **Python and Machine Learning data preprocessing practice project**.
